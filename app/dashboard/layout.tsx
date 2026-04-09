@@ -59,7 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', color: '#1c1917' }}>Punchcard</span>
+            <span style={{ fontWeight: 700, fontSize: '1rem', color: '#1c1917' }}>Loyaly</span>
           </div>
           {business && (
             <p style={{ fontSize: '0.8125rem', color: '#78716c', marginLeft: '2.5rem' }}>{business.name}</p>

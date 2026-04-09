@@ -1,4 +1,4 @@
--- Punchcard Database Schema
+-- Loyaly Database Schema
 -- Supabase PostgreSQL
 
 create extension if not exists "uuid-ossp";

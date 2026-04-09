@@ -212,7 +212,7 @@ export default function PunchPage() {
 
         {/* Footer */}
         <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8125rem', color: '#a8a29e' }}>
-          Powered by <span style={{ fontWeight: 600, color: '#d97706' }}>Punchcard</span>
+          Powered by <span style={{ fontWeight: 600, color: '#d97706' }}>Loyaly</span>
         </p>
       </div>
     </div>

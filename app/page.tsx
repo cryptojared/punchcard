@@ -12,7 +12,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className="text-lg font-bold tracking-tight">Punchcard</span>
+            <span className="text-lg font-bold tracking-tight">Loyaly</span>
           </div>
           <div className="flex items-center gap-6 text-sm">
             <Link href="#how" className="text-[#57534e] hover:text-[#1c1917] transition-colors">How it works</Link>
@@ -252,7 +252,7 @@ export default function Home() {
       {/* Footer */}
       <footer style={{ background: '#1c1917', padding: '2rem 1.5rem', textAlign: 'center' }}>
         <p style={{ fontSize: '0.875rem', color: '#78716c' }}>
-          © 2026 Punchcard. Made for local businesses.
+          © 2026 Loyaly. Made for local businesses.
         </p>
       </footer>
     </div>

@@ -93,7 +93,7 @@ export default function AuthPage() {
             <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Punchcard
+            Back to Loyaly
           </Link>
 
           <div style={{ marginBottom: '2rem' }}>

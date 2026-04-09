@@ -210,7 +210,7 @@ export default function DashboardPage() {
         <div style={{ background: '#f0fdf4', border: '2px solid #86efac', borderRadius: '1rem', padding: '1rem 1.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ fontSize: '1rem' }}>🎉</span>
-            <p style={{ fontWeight: 700, color: '#166534', fontSize: '0.9375rem' }}>Punchcard Pro — 30-day free trial active</p>
+            <p style={{ fontWeight: 700, color: '#166534', fontSize: '0.9375rem' }}>Loyaly Pro — 30-day free trial active</p>
           </div>
           <button
             onClick={manageSubscription}

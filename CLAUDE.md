@@ -1,4 +1,4 @@
-# Punchcard — Loyalty Cards for Local Businesses
+# Loyaly — Loyalty Cards for Local Businesses
 
 **Concept:** QR-code-based digital loyalty cards for coffee shops, salons, bars, and local businesses.
 **Problem solved:** Paper punch cards are a hassle. Digital loyalty requires apps nobody downloads.
