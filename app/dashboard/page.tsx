@@ -37,20 +37,43 @@ export default function DashboardPage() {
   const [formPunches, setFormPunches] = useState("10");
   const [formCustomer, setFormCustomer] = useState("");
   const [punchMsg, setPunchMsg] = useState("");
+  const [businessPlan, setBusinessPlan] = useState<"free" | "pro">("free");
+  const [businessName, setBusinessName] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: biz } = await supabase
+      // Try to get existing business
+      let { data: biz } = await supabase
         .from("businesses")
-        .select("id")
+        .select("id, name, plan, stripe_customer_id")
         .eq("owner_id", user.id)
         .single();
 
+      // Auto-create business on first login
+      if (!biz) {
+        const slug = user.email?.split("@")[0].replace(/[^a-z0-9]/gi, "-").toLowerCase() || "my-business";
+        const { data: newBiz } = await supabase
+          .from("businesses")
+          .insert({
+            owner_id: user.id,
+            name: user.user_metadata?.full_name || "My Business",
+            email: user.email || "",
+            slug: slug + "-" + Math.random().toString(36).slice(2, 6),
+            plan: "free",
+          })
+          .select("id, name, plan, stripe_customer_id")
+          .single();
+        biz = newBiz;
+      }
+
       if (!biz) return;
       setBusinessId(biz.id);
+      setBusinessPlan(biz.plan as "free" | "pro" || "free");
+      setBusinessName(biz.name || "");
 
       const { data: cardsData } = await supabase
         .from("cards")
@@ -121,6 +144,42 @@ export default function DashboardPage() {
     setTimeout(() => setPunchMsg(""), 4000);
   }
 
+  async function startSubscription() {
+    setSubscribing(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, businessId }),
+      });
+      const { url, error } = await res.json();
+      if (error) {
+        setPunchMsg("Could not start subscription. Please try again.");
+        setTimeout(() => setPunchMsg(""), 4000);
+      } else if (url) {
+        window.location.href = url;
+      }
+    } finally {
+      setSubscribing(false);
+    }
+  }
+
+  async function manageSubscription() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const res = await fetch("/api/stripe/portal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, businessId }),
+      });
+      const { url, error } = await res.json();
+      if (url) window.location.href = url;
+    } catch {}
+  }
+
   function getStatusBadge(status: string) {
     if (status === "completed") return "badge badge-amber";
     if (status === "redeemed") return "badge badge-green";
@@ -131,10 +190,41 @@ export default function DashboardPage() {
 
   return (
     <div style={{ padding: '2rem 2.5rem' }}>
+      {/* Subscription Banner */}
+      {businessPlan === "free" && (
+        <div style={{ background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', border: '2px solid #f59e0b', borderRadius: '1rem', padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <p style={{ fontWeight: 700, color: '#1c1917', marginBottom: '0.125rem' }}>You're on the free plan</p>
+            <p style={{ fontSize: '0.875rem', color: '#78716c' }}>Upgrade to create unlimited loyalty cards and customers.</p>
+          </div>
+          <button
+            onClick={startSubscription}
+            disabled={subscribing}
+            style={{ background: '#f59e0b', color: '#ffffff', fontWeight: 700, padding: '0.625rem 1.25rem', borderRadius: '0.625rem', fontSize: '0.9375rem', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            {subscribing ? "Redirecting..." : "Start free trial →"}
+          </button>
+        </div>
+      )}
+      {businessPlan === "pro" && (
+        <div style={{ background: '#f0fdf4', border: '2px solid #86efac', borderRadius: '1rem', padding: '1rem 1.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1rem' }}>🎉</span>
+            <p style={{ fontWeight: 700, color: '#166534', fontSize: '0.9375rem' }}>Punchcard Pro — 30-day free trial active</p>
+          </div>
+          <button
+            onClick={manageSubscription}
+            style={{ background: '#ffffff', color: '#166534', fontWeight: 600, padding: '0.5rem 1rem', borderRadius: '0.5rem', fontSize: '0.875rem', border: '1px solid #86efac', cursor: 'pointer' }}
+          >
+            Manage subscription
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1c1917' }}>Your Loyalty Cards</h1>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1c1917' }}>{businessName || "Your"} Loyalty Cards</h1>
           <p style={{ color: '#78716c', fontSize: '0.9375rem', marginTop: '0.25rem' }}>
             {cards.length} card{cards.length !== 1 ? "s" : ""} total
           </p>

@@ -30,7 +30,7 @@ export default function Home() {
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            Free for 30 days. No credit card.
+            30-day free trial. Card charged on day 31.
           </div>
 
           <h1 style={{ fontSize: 'clamp(2.25rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', color: '#1c1917', marginBottom: '1.25rem' }}>
@@ -203,10 +203,10 @@ export default function Home() {
                 Most popular
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.375rem', justifyContent: 'center', marginBottom: '0.25rem' }}>
-                <span style={{ fontSize: '3rem', fontWeight: 800, color: '#1c1917' }}>$9</span>
+                <span style={{ fontSize: '3rem', fontWeight: 800, color: '#1c1917' }}>$19.99</span>
                 <span style={{ fontSize: '1.0625rem', color: '#78716c' }}>/month</span>
               </div>
-              <p style={{ fontSize: '0.9375rem', color: '#78716c', marginBottom: '1.5rem' }}>billed monthly. Cancel anytime.</p>
+              <p style={{ fontSize: '0.9375rem', color: '#78716c', marginBottom: '1.5rem' }}>$19.99/mo after 30-day free trial</p>
               <ul style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', listStyle: 'none', padding: 0 }}>
                 {[
                   "Unlimited loyalty cards",
@@ -227,7 +227,7 @@ export default function Home() {
               <Link href="/auth?mode=signup" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '1rem', padding: '0.875rem' }}>
                 Start free trial
               </Link>
-              <p style={{ fontSize: '0.8125rem', color: '#a8a29e', marginTop: '0.75rem' }}>No credit card required</p>
+              <p style={{ fontSize: '0.8125rem', color: '#a8a29e', marginTop: '0.75rem' }}>Card required — 30 days free</p>
             </div>
           </div>
         </div>
