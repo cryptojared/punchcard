@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe, STRIPE_PRICE_ID } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get business info
     const { data: business } = await supabaseAdmin
       .from("businesses")
       .select("*")
@@ -26,32 +25,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Business not found" }, { status: 404 });
     }
 
-    // Check if already subscribed
     if (business.stripe_subscription_id && business.plan === "pro") {
       return NextResponse.json({ error: "Already subscribed" }, { status: 400 });
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const stripe = getStripe();
 
-    // Create or get Stripe customer
     let customerId = business.stripe_customer_id;
     if (!customerId) {
       const customer = await stripe.customers.create({
         metadata: { supabase_user_id: userId, business_id: businessId },
       });
       customerId = customer.id;
-
       await supabaseAdmin
         .from("businesses")
         .update({ stripe_customer_id: customerId })
         .eq("id", businessId);
     }
 
-    // Create checkout session with trial
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
-      line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
       success_url: `${appUrl}/dashboard?subscription=success`,
       cancel_url: `${appUrl}/dashboard?subscription=cancelled`,
       subscription_data: {

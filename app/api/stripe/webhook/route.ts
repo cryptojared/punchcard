@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const businessId = session.metadata?.business_id;
-
         if (businessId && session.subscription) {
           await supabaseAdmin
             .from("businesses")
@@ -55,7 +54,6 @@ export async function POST(req: NextRequest) {
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
         const businessId = sub.metadata?.business_id;
-
         if (businessId) {
           await supabaseAdmin
             .from("businesses")
@@ -68,7 +66,6 @@ export async function POST(req: NextRequest) {
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         console.log(`Payment failed for customer ${invoice.customer}`);
-        // Optionally: send email, downgrade plan, etc.
         break;
       }
     }
@@ -83,14 +80,9 @@ export async function POST(req: NextRequest) {
 async function handleSubscriptionUpdate(sub: Stripe.Subscription) {
   const businessId = sub.metadata?.business_id;
   if (!businessId) return;
-
   const isActive = ["active", "trialing"].includes(sub.status);
-
   await supabaseAdmin
     .from("businesses")
-    .update({
-      plan: isActive ? "pro" : "free",
-      stripe_subscription_id: sub.id,
-    })
+    .update({ plan: isActive ? "pro" : "free", stripe_subscription_id: sub.id })
     .eq("id", businessId);
 }
