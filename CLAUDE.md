@@ -2,29 +2,35 @@
 
 **Concept:** QR-code-based digital loyalty cards for coffee shops, salons, bars, and local businesses.
 **Problem solved:** Paper punch cards are a hassle. Digital loyalty requires apps nobody downloads.
-**Solution:** Customers scan a QR code once, their card lives in their browser forever, staff taps to punch.
-**Price:** $9/month per business
+**Solution:** Customers scan QR → enter phone → get SMS code → card created. One QR code per promotion, customers auto-recognized on return.
+**Price:** $29.99/month per business (includes Twilio SMS)
 
 ## Stack
 - Next.js 16 (App Router, Tailwind CSS)
 - Supabase (auth + PostgreSQL + RLS)
-- Stripe (subscription billing — $9/mo)
+- Stripe (subscription billing — $29.99/mo, 30-day free trial)
+- Twilio (SMS verification codes)
 - QR code generation (qrcode.react)
 
 ## Pages
 - `/` — Landing page (warm amber theme, 30-day free trial CTA)
 - `/auth` — Sign up / Sign in (email + Google OAuth)
 - `/auth/callback` — OAuth redirect handler
-- `/dashboard` — Business dashboard (create cards, punch, view QR codes, redeem)
-- `/punch/[token]` — Public customer card page (punch + view progress)
+- `/dashboard` — Business dashboard (create promos, view QR codes, punch/redeem customers)
+- `/punch/[token]` — Public customer card page (phone verify → card view → punch)
 
 ## Database Tables
 - `businesses` — business profiles, owner_id links to auth.users
-- `cards` — loyalty cards with punch count, reward, QR token
-- `punches` — visit log entries
+- `promo_templates` — one QR/promotion per business (name, punch_count, reward, qr_token)
+- `customer_cards` — one per customer per promo (phone_hash, punches_remaining, status)
+- `verification_codes` — SMS OTP codes (phone_hash, code, expires_at)
 
 ## Key Functions
-- `punch_card(p_card_id)` — RPC: decrements punches_remaining, logs punch, returns updated state
+- `punch_customer_card(p_customer_card_id)` — RPC: decrements punches_remaining, returns updated state
+- `createPromo()` — dashboard: creates promo_templates row with auto-generated qr_token
+- `/api/sms/send-code` — sends 4-digit OTP via Twilio
+- `/api/sms/verify-code` — verifies OTP, creates/returns customer_card
+- `/api/punch-customer` — calls punch_customer_card RPC
 
 ## Setup Steps
 1. Create Supabase project → run `lib/schema.sql` in SQL Editor
