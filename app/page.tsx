@@ -203,18 +203,19 @@ export default function Home() {
                 Most popular
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.375rem', justifyContent: 'center', marginBottom: '0.25rem' }}>
-                <span style={{ fontSize: '3rem', fontWeight: 800, color: '#1c1917' }}>$19.99</span>
+                <span style={{ fontSize: '3rem', fontWeight: 800, color: '#1c1917' }}>$29.99</span>
                 <span style={{ fontSize: '1.0625rem', color: '#78716c' }}>/month</span>
               </div>
-              <p style={{ fontSize: '0.9375rem', color: '#78716c', marginBottom: '1.5rem' }}>$19.99/mo after 30-day free trial</p>
+              <p style={{ fontSize: '0.9375rem', color: '#78716c', marginBottom: '1.5rem' }}>$29.99/mo after 30-day free trial</p>
               <ul style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', listStyle: 'none', padding: 0 }}>
                 {[
                   "Unlimited loyalty cards",
                   "Unlimited customers",
                   "Unlimited punches",
-                  "QR code per card",
+                  "1 QR code per promotion",
                   "Redemption tracking",
                   "30-day free trial",
+                  "SMS customer verification",
                 ].map((f) => (
                   <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', fontSize: '0.9375rem', color: '#1c1917' }}>
                     <svg style={{ width: '1.125rem', height: '1.125rem', color: '#f59e0b', flexShrink: 0 }} fill="currentColor" viewBox="0 0 20 20">
